@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💖 Rinrin 💖</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #fff0f5;
+            overflow-x: hidden;
+        }
+
+        /* Hearts */
+        #hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 200;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 2em;
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-10vh);
+                opacity: 0;
+            }
+        }
+
+        /* Popups & Loading */
+        .popup,
+        .loading,
+        .surprise {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff0f5;
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 90%;
+            width: 400px;
+            text-align: center;
+            z-index: 100;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Surprise content */
+        .surprise-content {
+            background: #ffe6eb;
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+            text-align: center;
+            overflow-y: auto;
+            max-height: 80vh;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .surprise-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .surprise-content img {
+            max-width: 80%;
+            height: auto;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        /* Flip Card */
+        .flip-card {
+            width: 80%;
+            max-width: 400px;
+            height: 300px;
+            margin: 20px auto;
+            perspective: 1200px;
+            cursor: pointer;
+            transition: transform 0.6s ease;
+            will-change: transform;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front,
+        .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+            backface-visibility: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Front */
+        .flip-card-front {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .flip-card-front img {
+            width: 100%;
+            height: auto;
+            border-radius: 15px;
+        }
+
+        .flip-card:hover {
+            transform: scale3d(.99, .99, .99);
+            transition: transform 0.3s ease;
+        }
+
+        .front-text {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.123);
+            padding: 6px 12px;
+            border-radius: 8px;
+        }
+
+        /* Back */
+        .flip-card-back {
+            background-color: rgba(255, 230, 235, 0.95);
+            transform: rotateY(180deg);
+            color: #333;
+            font-size: 1.1em;
+            box-shadow: inset 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow-wrap: break-word;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Animation */
+        .wrapper {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            transform: translate(-50%, -50%);
+            top: 50px;
+            left: 50%;
+            background-color: #ff4d6d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 0;
+        }
+
+        .letter {
+            height: 80%;
+            width: 80%;
+            background: #fffbea;
+            border: 2px solid #e6d7a3;
+            position: absolute;
+            top: 0;
+            border-radius: 5px;
+            z-index: 1;
+            transition: transform 0.5s;
+        }
+
+        .lid-3 {
+            width: 0;
+            height: 0;
+            position: absolute;
+            border-top: 100px solid transparent;
+            border-bottom: 100px solid rgb(250, 143, 143);
+            border-left: 150px solid rgb(253, 125, 125);
+            border-right: 150px solid rgb(250, 143, 143);
+            z-index: 3;
+        }
+
+        .lid {
+            width: 0;
+            height: 0;
+            position: absolute;
+            border-bottom: 100px solid transparent;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            transform-origin: top;
+            transition: transform 0.25s linear;
+        }
+
+        .lid-1 {
+            border-top: 100px solid rgb(252, 101, 101);
+            transform: rotateX(0deg);
+            z-index: 3;
+            transition-delay: 0.75s;
+
+        }
+
+        .lid-2 {
+            border-top: 100px solid rgb(255, 137, 137);
+            transform: rotateX(90deg);
+            z-index: 1;
+            transition-delay: 0.5s;
+        }
+
+        .wrapper:hover .lid-1 {
+            transform: rotateX(90deg);
+            transition-delay: 0s;
+        }
+
+        .wrapper:hover .lid-2 {
+            transform: rotateX(180deg);
+            transition-delay: 0.25s;
+        }
+
+        .wrapper:hover .letter {
+            transform: translateY(-50px);
+            transition: transform 0.5s;
+            transition-delay: 0.2s;
+        }
+
+        .icon-container {
+            position: relative;
+            text-align: center;
+            top: -.2cap;
+            z-index: 10;
+        }
+
+        .icon-container::before {
+            content: '';
+            display: block;
+            width: 30px;
+            height: 30px;
+            background-image: url('heart.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            margin: 0 auto;
+        }
+
+        /* Tula popup */
+        .tula-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 450px;
+            max-height: 80vh;
+            background: #fffbea;
+            border: 2px solid #e6d7a3;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            overflow-y: auto;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            display: none;
+            justify-content: center;
+            text-align: center;
+            z-index: 200;
+        }
+
+        /* Hide scrollbar */
+        .tula-popup::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tula-popup {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Close button */
+        .tula-close {
+            position: sticky;
+            top: 8px;
+            left: 700px;
+            background: #f1cf72;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        /* additional */
+
+        #adjImg {
+            position: relative;
+            bottom: 30px;
+        }
+
+        .byTan {
+            position: absolute;
+            top: 11cap;
+            z-index: 10;
+            color: white;
+            font-size: 1.2em;
+            stroke: 1px solid #000000;
+        }
+
+        #dancingCFont {
+            font-family: 'Dancing Script', cursive;
+        }
+
+        #greatCFont {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2rem;
+        }
+
+        #pacificoCFont {
+            font-family: 'Pacifico', cursive;
+            font-size: 1.5rem;
+        }
+
+        #fontColor {
+            color: #5a1320;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="hearts"></div>
+
+    <div class="popup" id="popup">
+        <h2>Gala tayu? Libre ko 🥰</h2>
+        <button id="yesBtn" style="background:#ff4d6d;color:white;margin:10px;">Sureee po! 💕</button>
+        <button id="noBtn" style="background:#ddd;color:#333;margin:10px;">No 😏</button>
+    </div>
+
+    <div class="loading" id="loading" style="display:none;">
+        <h3 id="loadingText">Wait po, ihi lang akuu</h3>
+    </div>
+
+    <div class="surprise" id="surprise" style="display:none;">
+        <div class="surprise-content">
+            <h2 id="greatCFont" style="color: #ff4d6d;">Happy Monthsary, Bb!</h2>
+
+            <!-- Flip Card -->
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <img src="forrinrin.jpg" alt="Your Image" onerror="this.style.display='none'">
+                        <div class="front-text">Click Me</div>
+                    </div>
+                    <div class="flip-card-back">
+                        <div class="back-text">
+                            <!-- EDIT THIS MESSAGE -->
+                            <p id="fontColor">I love youuu, Bb Rinrin 💖</p>
+                            <br>
+                            <p id="fontColor">Virtual Flowers for you 🌺💐🌹</p>
+                            <br>
+                            <p id="fontColor">At syempre gagala tayu nang libre ko muejejeje 😋</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h3 id="dancingCFont" style="color: #ff758e;">Dahil nag-sure ka... kiss aku 😁</h3>
+            <h5 style="color: #ff0000;">Note: Bawal na bawiin kasi nag-sure ka na e 😘</h5>
+
+            <!-- <p id="adjImg"><img src="openthis.png" alt=""></p> -->
+            <br><br><br>
+            <div class="wrapper">
+                <div class="byTan">
+                    <p id="dancingCFont"> From: Tanskie </p>
+                </div>
+
+                <div class="icon-container"></div>
+
+                <div class="lid lid-1">
+
+                </div>
+                <div class="lid lid-2">
+
+                </div>
+                <div class="lid-3">
+
+                </div>
+                <div class="letter">
+                    <br>
+                    <p style="cursor: pointer;">
+                        ▶ [ Click me to Read ] ◀
+                    </p>
+                    <p style="text-align:center; color:#e9c35b;font-family: 'Great Vibes', cursive;">
+                        " Kawalang-Hanggan "
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <audio id="music" src="forrinrin.mp3" loop></audio>
+    </div>
+    <div class="tula-popup" id="tulaPopup">
+        <button class="tula-close" id="closeTula">X</button>
+        <h2 id="greatCFont" style="text-align:center; color:#f1cf72;">" Kawalang-Hanggan "</h2>
+        <span style="color:#daab2b; font-family: 'Dancing Script', cursive; position: relative; bottom: 20px; font-weight: bold;">by Tanskie</span>
+        <p>
+            Una sa lahat, maraming salamat,<br>
+            Salamat na nand'yan ka sa bawat pagmulat.<br>
+            Pagmulat na 'pag wala ka'y mahirap,<br>
+            'Pag nand'yan nama'y halos wala ng kurap.<br><br>
+            Walang sawang pagmamahal na binibigay,<br>
+            Hindi matutumbasan ng kahit anong bagay.<br>
+            Tanggapin nawa munting regalo sa iyo,<br>
+            Upang masuklian ang pag-ibig mo.<br><br>
+            Tila ma'y 'di sapat ito,<br>
+            Susubukan pa ring ihatid sa'yo.<br>
+            Ikaw lamang ang aking sisintahin,<br>
+            Sa habambuhay na ating lalakbayin.<br><br>
+            Sa panahon na tila pabago-bago ang hangin,<br>
+            Ikaw pa rin, wala nang hahanapin.<br>
+            Ikaw lamang at ikaw ang mamahalin,<br>
+            Sa hirap at ginhawang aking dadanasin.<br><br>
+            Sa aking munting ibibigay na ito,<br>
+            Payagan sanang gumala tayo.<br>
+            Libre ko naman sana,<br>
+            Para hindi ka na mag-abala pa.<br><br>
+            Pagbigyan na ang kahilingang ilibre ka sa pasyal,<br>
+            Para mabigyan ka ng saya at ligaya sa araw nating espesyal.<br>
+            'Wag kang mag-aalala sa gastos na maibibigay,<br>
+            Sapagkat ito'y para sa'yo lamang tunay.<br><br>
+            Ika'y mapasaya sa simpleng paraan,<br>
+            Ay sapat na't sa aki'y magbibigay ng kasiyahan.<br>
+            Wala iyong katumbas na halaga,<br>
+            Kung ika'y matutuwa at sasaya.<br><br>
+            Wala namang ibang hangarin,<br>
+            Kundi ika'y habambuhay na masaya sa akin.<br>
+            Ibigin mo sana 'ko at walang ibang hanapin,<br>
+            Sapagkat ika'y mamahalin at wala nang papangarapin.
+        </p>
+    </div>
+
+    <script>
+        // Floating hearts
+        const heartsContainer = document.getElementById('hearts');
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = (Math.random() * 2 + 1) + 'em';
+            heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            heart.textContent = '❤️';
+            heartsContainer.appendChild(heart);
+            setTimeout(() => heart.remove(), 5000);
+        }
+        setInterval(createHeart, 300);
+
+        // No button teleport + clickable
+        const noBtn = document.getElementById('noBtn');
+        const popup = document.getElementById('popup');
+        const noTexts = ["Try again 😜", "Not allowed 😏", "Haha nope!", "Catch me! 🏃‍♂️", "Nice try 😉"];
+        const noMessages = ["Anung ayaw 😠", "Payag na kasiii 🙄", "Kala mo ahh 😋", "Bad muuu 😔"];
+
+        noBtn.addEventListener('mouseenter', () => {
+            const maxX = popup.clientWidth - noBtn.clientWidth;
+            const maxY = popup.clientHeight - noBtn.clientHeight;
+            const x = Math.random() * maxX;
+            const y = Math.random() * maxY;
+            noBtn.style.position = 'absolute';
+            noBtn.style.left = x + 'px';
+            noBtn.style.top = y + 'px';
+            noBtn.textContent = noTexts[Math.floor(Math.random() * noTexts.length)];
+        });
+
+        noBtn.addEventListener('click', () => {
+            const msg = document.createElement('div');
+            msg.textContent = noMessages[Math.floor(Math.random() * noMessages.length)];
+            msg.style.position = 'absolute';
+            msg.style.left = (noBtn.offsetLeft + noBtn.clientWidth / 2) + 'px';
+            msg.style.top = (noBtn.offsetTop - 30) + 'px';
+            msg.style.transform = 'translateX(-50%)';
+            msg.style.background = 'rgba(0,0,0,0.7)';
+            msg.style.color = '#fff';
+            msg.style.padding = '6px 12px';
+            msg.style.borderRadius = '8px';
+            msg.style.opacity = '1';
+            msg.style.transition = 'opacity 1.5s ease-out, transform 1.5s ease-out';
+            popup.appendChild(msg);
+
+            setTimeout(() => {
+                msg.style.opacity = '0';
+                msg.style.transform = 'translate(-50%, -20px)';
+            }, 50);
+
+            setTimeout(() => msg.remove(), 1600);
+        });
+
+        // Loading dots animation (moved outside so Yes button can access)
+        let loadingInterval;
+        function startLoadingAnimation() {
+            const loadingText = document.getElementById('loadingText');
+            let dots = 0;
+            loadingInterval = setInterval(() => {
+                dots = (dots + 1) % 4;
+                loadingText.textContent = 'Wait po, ihi lang akuu' + '.'.repeat(dots);
+            }, 500);
+        }
+        function stopLoadingAnimation() {
+            clearInterval(loadingInterval);
+        }
+
+        // Yes button
+        const yesBtn = document.getElementById('yesBtn');
+        yesBtn.addEventListener('click', () => {
+            popup.style.display = 'none';
+            const loading = document.getElementById('loading');
+            loading.style.display = 'block';
+            startLoadingAnimation();
+
+            setTimeout(() => {
+                stopLoadingAnimation();
+                loading.style.display = 'none';
+                document.getElementById('surprise').style.display = 'block';
+                document.getElementById('music').play();
+            }, 3000);
+        });
+
+        // Flip card toggle
+        const flipCard = document.querySelector('.flip-card');
+        flipCard.addEventListener('click', () => {
+            flipCard.classList.toggle('flipped');
+        });
+
+        // Tula popup
+        const letter = document.querySelector('.letter');
+        const tulaPopup = document.getElementById('tulaPopup');
+        const closeTula = document.getElementById('closeTula');
+
+        letter.addEventListener('click', () => {
+            tulaPopup.style.display = 'block';
+        });
+
+        closeTula.addEventListener('click', () => {
+            tulaPopup.style.display = 'none';
+        });
+    </script>
+
+</body>
+
+</html>
